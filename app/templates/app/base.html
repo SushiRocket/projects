@@ -12,10 +12,10 @@
             <nav class="navbar">
                 <a href="#">HOME</a>
                 {% if user.is_authenticated %}
-                <a href="{% url 'app:tweet_form' %}">Post A Tweet</a>
-                <a href="#">Logout</a>
+                <a href="{% url 'app:tweet_create' %}">Post A Tweet</a>
+                <a href="{% url 'app:login' %}">Logout</a>
                 {% else %}
-                <a href="#">Login</a>
+                <a href="{% url 'app:logout' %}">Login</a>
                 {% endif%}
             </nav>
         </header>
