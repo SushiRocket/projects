@@ -1,5 +1,18 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
+    <h2>Create A New Tweet</h2>
+    <form method="post" action="">
+        {% csrf_token %}
+        <textarea name="content" id="">
+            {{ form.content.value }}
+        </textarea>
+        {% if form.content.errors %}
+        <div class="errors">
+            {{ form.content.errors }}
+        </div>
+        {% endif %}
+        <button type="submit">Tweet</button>
+    </form>
 {% endblock %}
 
