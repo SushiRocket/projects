@@ -3,6 +3,7 @@
 {% block content %}
 
 {% for tweet in tweets %}
+    <a href="{% url 'app:detail' %}"></a>
     <li>
        <div>{{ tweet.author.username }}</div>
        <div>{{ tweet.content }}</div>
