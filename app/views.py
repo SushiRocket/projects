@@ -31,7 +31,7 @@ def tweet_create(request):
             return redirect('app:tweet_detail', pk=tweet.pk)
     else:
         form = TweetForm()
-    return render(request, 'app:tweet_create', {'form':form})
+    return render(request, 'app/tweet_create.html', {'form':form})
 
 
 class SignUpView(View):
