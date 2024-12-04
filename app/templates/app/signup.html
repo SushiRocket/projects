@@ -1,0 +1,14 @@
+{% extends 'app/base.html' %}
+
+{% block title %}SignUp - Simple Twitter App{% endblock %}
+
+{% block content %}
+    <h2>SignUp</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">SiginUp</button>
+    </form>
+
+
+{% endblock %}
