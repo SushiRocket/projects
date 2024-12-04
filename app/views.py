@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from django.views.generic import CreateView,ListView
+from django.views.generic import CreateView,ListView,DetailView
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -13,19 +13,20 @@ from django.urls import reverse_lazy
 # Create your views here.
 
 class IndexView(ListView):
-    model = Tweet
-    template_name = 'app/index.html'
-    context_object_name = 'tweets'
-    ordering = ['-created_at']
+    model=Tweet
+    template_name='app/index.html'
+    context_object_name='tweets'
+    ordering=['-created_at']
+    paginate_by=5
 
 class TweetCreateView(LoginRequiredMixin,CreateView):
-    model = Tweet
-    form_class = TweetForm
-    template_name = 'app/tweet_create.html'
-    success_url = reverse_lazy('app:index')
+    model=Tweet
+    form_class=TweetForm
+    template_name='app/tweet_create.html'
+    success_url=reverse_lazy('app:index')
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author=self.request.user
         messages.success(self.request, 'ツイートが投稿されました！')
         return super().form_valid(form)
 
@@ -47,6 +48,10 @@ class SignUpView(View):
             user=form.save()
             login(request, user)
             messages.success(request, 'アカウントが作成され、ログインが成功しました！')#djangoのmessageフレームワーク
-            return redirect('index')
+            return redirect('app:index')
         else:
             return render(request, self.template_name, {'form':form})
+
+class TweetDetailView(DetailView):
+    model=Tweet
+    template_name='app/tweet_detail.html'

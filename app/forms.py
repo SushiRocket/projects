@@ -8,7 +8,7 @@ class TweetForm(forms.ModelForm):
         widget=forms.Textarea,
         max_length='1000',
         required=True,
-        help_text='今の気持ちをつぶやこう'
+        help_text='今の気持ちをつぶやこう',
     )
 
     class Meta:
