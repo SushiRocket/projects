@@ -13,19 +13,20 @@ from django.urls import reverse_lazy
 # Create your views here.
 
 class IndexView(ListView):
-    model = Tweet
-    template_name = 'app/index.html'
-    context_object_name = 'tweets'
-    ordering = ['-created_at']
+    model=Tweet
+    template_name='app/index.html'
+    context_object_name='tweets'
+    ordering=['-created_at']
+    paginate_by=5
 
 class TweetCreateView(LoginRequiredMixin,CreateView):
-    model = Tweet
-    form_class = TweetForm
-    template_name = 'app/tweet_create.html'
-    success_url = reverse_lazy('app:index')
+    model=Tweet
+    form_class=TweetForm
+    template_name='app/tweet_create.html'
+    success_url=reverse_lazy('app:index')
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author=self.request.user
         messages.success(self.request, 'ツイートが投稿されました！')
         return super().form_valid(form)
 
