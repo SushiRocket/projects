@@ -5,6 +5,10 @@
 {% block content %}
     <h2>Logged Out</h2>
     <p>You have been successfully logged out.</p>
-    <a href="{% url 'login' %}">Login again</a>
+    <form method="post" action="{% url 'app:login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
 
 {% endblock %}

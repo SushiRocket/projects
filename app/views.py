@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from django.views.generic import TemplateView, CreateView,ListView
+from django.views.generic import CreateView,ListView
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from.models import Tweet
@@ -21,7 +22,7 @@ class TweetCreateView(LoginRequiredMixin,CreateView):
     model = Tweet
     form_class = TweetForm
     template_name = 'app/tweet_create.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('app:index')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -38,14 +39,14 @@ class SignUpView(View):
     #ユーザーが送信した情報（GET/POSTデータ、ヘッダー、Cookieなど）が格納されています。
     def get(self,request):
         form=self.form_class()
-        return render(request,self.template_name, {'forms':form})
-    
+        return render(request,self.template_name, {'form':form})
+
     def post(self,request):
         form=self.form_class(request.POST)#ユーザの入力を渡す
         if form.is_valid():
             user=form.save()
             login(request, user)
-            messages(request, 'アカウントが作成され、ログインが成功しました！')#djangoのmessageフレームワーク
+            messages.success(request, 'アカウントが作成され、ログインが成功しました！')#djangoのmessageフレームワーク
             return redirect('index')
         else:
             return render(request, self.template_name, {'form':form})
