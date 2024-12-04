@@ -1,7 +1,18 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
-<h2>こんにち</h2>
-<h2>明日は、</h2>
+
+{% for tweet in tweets %}
+    <li>
+       <div>{{ tweet.author.username }}</div>
+       <div>{{ tweet.content }}</div>
+       <div>{{ tweet.created_at|date:"H:i" }}</div>
+    </li>
+{% empty %}
+    <li>
+        <div>投稿がありません</div>
+    </li>
+{% endfor %}
+
 {% endblock %}
 
