@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
-from django.views.generic import CreateView,ListView,DetailView
+from django.views.generic import ListView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -69,7 +69,3 @@ def tweet_detail(request, pk):
             'like_count': tweet.likes.count(),
         }
         return render(request, 'app/tweet_detail.html', context)
-
-class TweetDetailView(DetailView):
-    model=Tweet
-    template_name='app/tweet_detail.html'

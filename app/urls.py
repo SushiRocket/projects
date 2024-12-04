@@ -1,5 +1,5 @@
 from django.urls import path
-from.views import IndexView,SignUpView,TweetDetailView
+from.views import IndexView,SignUpView
 from django.contrib.auth import views as auth_views
 from . import views
 
