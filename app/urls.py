@@ -1,10 +1,11 @@
 from django.urls import path
-from.views import IndexView,TweetCreateView,SignUpView,TweetDetailView
+from.views import IndexView,SignUpView,TweetDetailView
 from django.contrib.auth import views as auth_views
+from . import views
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
-    path('create/', TweetCreateView.as_view(), name='tweet_create'),
+    path('tweet_create/', views.tweet_create, name='tweet_create'),
     path('signup', SignUpView.as_view(), name='signup'),
     path('tweet_detail/<int:pk>/', TweetDetailView.as_view(), name='tweet_detail'),
 
