@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.views import View
 from django.views.generic import CreateView,ListView,DetailView
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from.models import Tweet
@@ -19,16 +20,19 @@ class IndexView(ListView):
     ordering=['-created_at']
     paginate_by=5
 
-class TweetCreateView(LoginRequiredMixin,CreateView):
-    model=Tweet
-    form_class=TweetForm
-    template_name='app/tweet_create.html'
-    success_url=reverse_lazy('app:index')
+@login_required
+def tweet_create(request):
+    if request.method == 'POST':
+        form = TweetForm(request.POST)
+        if form.is_valid():
+            tweet = form.save(commit=False)
+            tweet.author = request.user
+            tweet.save()
+            return redirect('app:tweet_detail', pk=tweet.pk)
+    else:
+        form = TweetForm()
+    return render(request, 'app:tweet_create', {'form':form})
 
-    def form_valid(self, form):
-        form.instance.author=self.request.user
-        messages.success(self.request, 'ツイートが投稿されました！')
-        return super().form_valid(form)
 
 class SignUpView(View):
     form_class=SignUpForm
