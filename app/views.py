@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from django.views.generic import CreateView,ListView
+from django.views.generic import CreateView,ListView,DetailView
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -51,3 +51,8 @@ class SignUpView(View):
             return redirect('index')
         else:
             return render(request, self.template_name, {'form':form})
+
+class TweetDetailView(DetailView):
+    model=Tweet
+    template_name='app/tweet_detail.html'
+    context_object_name='tweets'
