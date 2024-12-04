@@ -1,11 +1,11 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
 from django.views.generic import CreateView,ListView,DetailView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from.models import Tweet
+from.models import Tweet,Like
 from.forms import TweetForm,SignUpForm
 from django.urls import reverse_lazy
 
@@ -55,6 +55,20 @@ class SignUpView(View):
             return redirect('app:index')
         else:
             return render(request, self.template_name, {'form':form})
+
+def tweet_detail(request, pk):
+    tweet = get_object_or_404(Tweet,pk=pk) #Djangoの関数。特定のモデルオブジェクトを取得
+
+    is_liked = False #初期値をFolseで設定
+    if request.user.is_authenticated:
+        is_liked = Like.objects.filter(user=request.user, tweet=tweet).exists() #Likeモデルに紐づく投稿があればis_like=Trueに
+
+        context = {#contextでテンプレートにviewを辞書でわたす
+            'tweet': tweet,
+            'is_liked': is_liked,
+            'like_count': tweet.likes.count(),
+        }
+        return render(request, 'app/tweet_detail.html', context)
 
 class TweetDetailView(DetailView):
     model=Tweet
