@@ -3,12 +3,13 @@
 {% block content %}
 
 {% for tweet in tweets %}
-    <a href="{% url 'app:detail' %}"></a>
-    <li>
-       <div>{{ tweet.author.username }}</div>
-       <div>{{ tweet.content }}</div>
-       <div>{{ tweet.created_at|date:"H:i" }}</div>
-    </li>
+    <a href="{% url 'app:tweet_detail' tweet.pk%}">
+        <li>
+            <div>{{ tweet.author.username }}</div>
+            <div>{{ tweet.content }}</div>
+            <div>{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
+        </li>
+    </a>
 {% empty %}
     <li>
         <div>投稿がありません</div>

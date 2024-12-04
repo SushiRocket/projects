@@ -48,11 +48,10 @@ class SignUpView(View):
             user=form.save()
             login(request, user)
             messages.success(request, 'アカウントが作成され、ログインが成功しました！')#djangoのmessageフレームワーク
-            return redirect('index')
+            return redirect('app:index')
         else:
             return render(request, self.template_name, {'form':form})
 
 class TweetDetailView(DetailView):
     model=Tweet
     template_name='app/tweet_detail.html'
-    context_object_name='tweets'
