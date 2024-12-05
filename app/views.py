@@ -82,6 +82,15 @@ def tweet_edit(request,pk):
             return redirect('app:tweet_detail', pk=tweet.pk)
     else:
         form = TweetForm(instance=tweet)
-        return render(request, 'app/tweet_detail.html', {'form': form, 'tweet': tweet})
+        return render(request, 'app/tweet_edit.html', {'form': form, 'tweet': tweet})
 
+@login_required
+def tweet_delete(request,pk):
+    tweet = get_object_or_404(Tweet, pk=pk)
+    if tweet.author != request.user:
+        return HttpResponseForbidden('あなたはこのツイートを削除する権限がありません。')
+    if request.method == 'POST':
+        tweet.delete()
+        return redirect('app:index')
+    return render(request, 'app/tweet_delete.html', {'tweet': tweet})
 
