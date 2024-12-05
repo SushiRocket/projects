@@ -8,7 +8,7 @@ from django.contrib import messages
 from.models import Tweet,Like
 from.forms import TweetForm,SignUpForm
 from django.urls import reverse_lazy
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden,JsonResponse
 
 
 # Create your views here.
@@ -93,4 +93,19 @@ def tweet_delete(request,pk):
         tweet.delete()
         return redirect('app:index')
     return render(request, 'app/tweet_delete.html', {'tweet': tweet})
+
+@login_required
+def like_toggle(request,pk):
+    if request.method == 'POST':
+        tweet = get_object_or_404(Tweet, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, tweet=tweet)
+        if not created:
+            like.delete()
+            liked=False
+        else:
+            liked=True
+            like_count=tweet.likes.count()
+            return JsonResponse({'like': like, 'like_count': like_count})
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
