@@ -8,6 +8,7 @@ urlpatterns = [
     path('tweet_create/', views.tweet_create, name='tweet_create'),
     path('signup', SignUpView.as_view(), name='signup'),
     path('tweet_detail/<int:pk>/', views.tweet_detail, name='tweet_detail'),
+    path('tweet_edit/<int:pk>/', views.tweet_edit, name='tweet_edit'),
 
     #認証関連
     path('login/', auth_views.LoginView.as_view(template_name='app/login.html'), name='login'),
