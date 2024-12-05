@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
-from django.views.generic import CreateView,ListView,DetailView
+from django.views.generic import ListView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,7 +8,7 @@ from django.contrib import messages
 from.models import Tweet,Like
 from.forms import TweetForm,SignUpForm
 from django.urls import reverse_lazy
-
+from django.http import HttpResponseForbidden
 
 
 # Create your views here.
@@ -31,7 +31,7 @@ def tweet_create(request):
             return redirect('app:tweet_detail', pk=tweet.pk)
     else:
         form = TweetForm()
-    return render(request, 'app:tweet_create', {'form':form})
+    return render(request, 'app/tweet_create.html', {'form':form})
 
 
 class SignUpView(View):
@@ -70,6 +70,27 @@ def tweet_detail(request, pk):
         }
         return render(request, 'app/tweet_detail.html', context)
 
-class TweetDetailView(DetailView):
-    model=Tweet
-    template_name='app/tweet_detail.html'
+@login_required
+def tweet_edit(request,pk):
+    tweet = get_object_or_404(Tweet,pk=pk)
+    if tweet.author != request.user:
+        return HttpResponseForbidden('あなたはこのツイートを編集する権限がありません。') #データは存在するがアクセス権限がないとき。メッセージ返せる。
+    if request.method == 'POST':
+        form = TweetForm(request.POST, instance=tweet)
+        if form.is_valid():
+            form.save()
+            return redirect('app:tweet_detail', pk=tweet.pk)
+    else:
+        form = TweetForm(instance=tweet)
+        return render(request, 'app/tweet_edit.html', {'form': form, 'tweet': tweet})
+
+@login_required
+def tweet_delete(request,pk):
+    tweet = get_object_or_404(Tweet, pk=pk)
+    if tweet.author != request.user:
+        return HttpResponseForbidden('あなたはこのツイートを削除する権限がありません。')
+    if request.method == 'POST':
+        tweet.delete()
+        return redirect('app:index')
+    return render(request, 'app/tweet_delete.html', {'tweet': tweet})
+

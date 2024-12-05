@@ -1,0 +1,11 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <h2>Edit a Tweet</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p}}
+        <button type="submit">保存</button>
+        <a href="{% url 'app:tweet_detail' tweet.pk%}">キャンセル</a>
+    </form>
+{% endblock %}
