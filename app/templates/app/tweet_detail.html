@@ -1,23 +1,67 @@
+<!-- app/templates/app/tweet_detail.html -->
+
 {% extends 'app/base.html' %}
 
 {% block content %}
-    <div>{{ tweet.author.username }}</div>
-    <div>{{ tweet.content }}</div>
+    <h2>{{ tweet.author.username }}</h2>
+    <p>{{ tweet.content }}</p>
     {% if tweet.created_at %}
-    <div>{{ tweet.created_at|date:"Y年m月d日 H:i" }}</div>
+        <p>{{ tweet.created_at|date:"Y年m月d日 H:i" }}</p>
     {% else %}
-    <div>日付けがありません</div>
+        <p>日付けがありません</p>
     {% endif %}
+    
     {% if user == tweet.author %}
-    <a href="{% url 'app:tweet_edit' tweet.pk %}">編集</a>
-    <a href="{% url 'app:tweet_delete' tweet.pk %}">削除</a>
+        <a href="{% url 'app:tweet_edit' tweet.pk %}">編集</a>
+        <a href="{% url 'app:tweet_delete' tweet.pk %}">削除</a>
     {% endif %}
-
+    
     {% if user.is_authenticated %}
-    <button id="like-button" class="like-button {% if is_liked %}liked{% endif %}">
-        <i class="{% if is_liked %}fas fa-heart{% else %}far fa-heart{% endif %}"></i>
-        <span id="like-count">{{ like_count }}</span>
-    </button>
+        <button id="like-button" class="like-button {% if is_liked %}liked{% endif %}">
+            {% if is_liked %}
+                ❤️
+            {% else %}
+                🤍
+            {% endif %}
+            <span id="like-count">{{ like_count }}</span>
+        </button>
+    {% else %}
+        <p>いいねするにはログインしてください。</p>
     {% endif %}
 
+    <!-- CSRFトークンとツイートIDをJavaScriptに渡す -->
+    <script>
+        const csrfToken = '{{ csrf_token }}';
+        const likeToggleUrl = "{% url 'app:like_toggle' tweet.pk %}";
+    </script>
+
+    <!-- いいね機能のJavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const likeButton = document.getElementById('like-button');
+            const likeCount = document.getElementById('like-count');
+
+            if (likeButton) {
+                likeButton.addEventListener('click', () => {
+                    fetch(likeToggleUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.liked){
+                            likeButton.innerHTML = '❤️ <span id="like-count">' + data.like_count + '</span>';
+                        } else {
+                            likeButton.innerHTML = '🤍 <span id="like-count">' + data.like_count + '</span>';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+    </script>
 {% endblock %}
