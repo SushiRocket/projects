@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
 from django.views.generic import ListView
 from django.contrib.auth import login
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -94,18 +95,16 @@ def tweet_delete(request,pk):
         return redirect('app:index')
     return render(request, 'app/tweet_delete.html', {'tweet': tweet})
 
+@require_POST
 @login_required
 def like_toggle(request,pk):
-    if request.method == 'POST':
         tweet = get_object_or_404(Tweet, pk=pk)
         like, created = Like.objects.get_or_create(user=request.user, tweet=tweet)
+
         if not created:
             like.delete()
             liked=False
         else:
             liked=True
-            like_count=tweet.likes.count()
-            return JsonResponse({'like': like, 'like_count': like_count})
-    else:
-        return JsonResponse({'error': 'Invalid request'}, status=400)
-
+        like_count=tweet.likes.count()
+        return JsonResponse({'liked': liked, 'like_count': like_count})
