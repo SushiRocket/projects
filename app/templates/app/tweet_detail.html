@@ -8,4 +8,8 @@
     {% else %}
     <div>日付けがありません</div>
     {% endif %}
+    {% if user == tweet.author %}
+    <a href="{% url 'app:tweet_edit' tweet.pk %}">編集</a>
+    <a href="{% url 'app:tweet_delete' tweet.pk %}">削除</a>
+    {% endif %}
 {% endblock %}
