@@ -9,6 +9,7 @@ urlpatterns = [
     path('signup', SignUpView.as_view(), name='signup'),
     path('tweet_detail/<int:pk>/', views.tweet_detail, name='tweet_detail'),
     path('tweet_edit/<int:pk>/', views.tweet_edit, name='tweet_edit'),
+    path('tweet_delete/<int:pk>/', views.tweet_delete, name='tweet_delete'),
 
     #認証関連
     path('login/', auth_views.LoginView.as_view(template_name='app/login.html'), name='login'),
