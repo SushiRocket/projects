@@ -8,7 +8,7 @@ from django.contrib import messages
 from.models import Tweet,Like
 from.forms import TweetForm,SignUpForm
 from django.urls import reverse_lazy
-
+from django.http import HttpResponseForbidden
 
 
 # Create your views here.
@@ -69,3 +69,19 @@ def tweet_detail(request, pk):
             'like_count': tweet.likes.count(),
         }
         return render(request, 'app/tweet_detail.html', context)
+
+@login_required
+def tweet_edit(request,pk):
+    tweet = get_object_or_404(Tweet,pk=pk)
+    if tweet.author != request.user:
+        return HttpResponseForbidden('あなたはこのツイートを編集する権限がありません。') #データは存在するがアクセス権限がないとき。メッセージ返せる。
+    if request.method == 'POST':
+        form = TweetForm(request.POST, instance=tweet)
+        if form.is_valid():
+            form.save()
+            return redirect('app:tweet_detail', pk=tweet.pk)
+    else:
+        form = TweetForm(instance=tweet)
+        return render(request, 'app/tweet_detail.html', {'form': form, 'tweet': tweet})
+
+
