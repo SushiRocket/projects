@@ -108,3 +108,5 @@ def like_toggle(request,pk):
             liked=True
         like_count=tweet.likes.count()
         return JsonResponse({'liked': liked, 'like_count': like_count})
+
+def user_profile(request, username): #URLからusernameを取得。path('user/<str:username>/', views.user_profile, name='user_profile'),
