@@ -1,0 +1,34 @@
+<!-- app/templates/app/user_profile.html -->
+
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="profile-header">
+        <h2>{{ profile_user.username }}のプロフィール</h2>
+        {% if profile_user.first_name or profile_user.last_name %}
+            <p>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+        {% endif %}
+        <p>投稿数: {{ tweets.count }}</p>
+    </div>
+
+    <hr>
+
+    <div class="user-tweets">
+        <h3>{{ profile_user.username }}のツイート一覧</h3>
+        {% if tweets %}
+            <ul>
+                {% for tweet in tweets %}
+                    <li>
+                        <p>{{ tweet.content }}</p>
+                        <small>{{ tweet.created_at|date:"Y年m月d日 H:i" }}</small>
+                        <br>
+                        <a href="{% url 'app:tweet_detail' tweet.pk %}">詳細</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>ツイートがありません。</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -3,7 +3,9 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
-    <h2>{{ tweet.author.username }}</h2>
+    <h2>
+        <a href="{% url 'app:user_profile' tweet.author.username %}">{{ tweet.author.username }}</a>
+    </h2>
     <p>{{ tweet.content }}</p>
     {% if tweet.created_at %}
         <p>{{ tweet.created_at|date:"Y年m月d日 H:i" }}</p>

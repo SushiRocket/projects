@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from.models import Tweet,Like
+from.models import Tweet,Like,User
 from.forms import TweetForm,SignUpForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
@@ -108,3 +108,14 @@ def like_toggle(request,pk):
             liked=True
         like_count=tweet.likes.count()
         return JsonResponse({'liked': liked, 'like_count': like_count})
+
+def user_profile(request, username): #URLからusernameを取得。path('user/<str:username>/', views.user_profile, name='user_profile')
+    user = get_object_or_404(User, username=username)
+    tweets = Tweet.objects.filter(author=user).order_by('-created_at')
+
+    context = { #テンプレートに辞書で返す
+        'profile_user': user,
+        'tweets': tweets,
+    }
+
+    return render(request, 'app/user_profile.html', context)
