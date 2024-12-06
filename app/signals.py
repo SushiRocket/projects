@@ -9,6 +9,6 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.object.create(user=instance)
 
-@receiver(poat_save, sender=User)
+@receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
