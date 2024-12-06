@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from.models import Tweet
+from.models import Tweet,Profile
 
 class TweetForm(forms.ModelForm):
     content=forms.CharField(
@@ -30,3 +30,15 @@ class SignUpForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("このメールアドレスは既に使用されています。")
         return email
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avator']
+        wigets ={
+            'avator': forms.ClearableFileInput(attrs={
+                'class': 'profile-input',
+                'placeholder': 'ファイルを選択してください',
+                'accept': '.jpg, .png, .gif',
+            })
+        }
