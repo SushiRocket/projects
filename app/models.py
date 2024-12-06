@@ -24,3 +24,14 @@ class Like(models.Model):
 
     def __str__(self):
         return f"{self.user.username} likes {self.tweet.id}"
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avator = models.ImageField(
+        upload_to='avators',
+        default='avators/default.png',
+        blank=True
+    )
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
