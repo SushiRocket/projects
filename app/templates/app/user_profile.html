@@ -10,12 +10,16 @@
         {% else %}
             <img src="{{ static 'media/avators/default.png' }}" alt="Dfault avator" class="avator">
         {% endif %}
-        
+
         <h2>{{ profile_user.username }}のプロフィール</h2>
         {% if profile_user.first_name or profile_user.last_name %}
             <p>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
         {% endif %}
         <p>投稿数: {{ tweets.count }}</p>
+
+        {% if user == profile_user %}
+            <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
+        {% endif %}
     </div>
 
     <hr>
