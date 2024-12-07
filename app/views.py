@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from.models import Tweet,Like,User
-from.forms import TweetForm,SignUpForm
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 
@@ -119,3 +119,20 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
     }
 
     return render(request, 'app/user_profile.html', context)
+
+@login_required
+def edit_proofile(request):
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.post, request.FILES, instance=request.user.profile )#HTTP リクエストの内容を保持する属性
+        if form.is_valid():
+            form.save()
+            messages.success('プロフィールが正常に更新されました！')
+            return redirect ('app:user_profile', username=request.user.usernsme)
+    else:
+        form = ProfileUpdateForm(instance=request.user.profile)
+    
+    context = {
+        'form': form
+    }
+
+    return render(request, 'app/edit_profile', context)
