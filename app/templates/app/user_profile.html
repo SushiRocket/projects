@@ -8,8 +8,7 @@
         {% if profile_user.profile.avator %}
             <img src="{{ profile_user.profile.avator.url }}" alt="{{ profile_user.username }}'s avator" class="avator">
         {% else %}
-            <img src="/media/avatars/default.png" alt="Default Avatar">
-        {% endif %}
+        <img src="{{ MEDIA_URL }}avators/default.png" alt="Default Avatar"> <!-- 動的に設定 -->
         {% endif %}
 
 
