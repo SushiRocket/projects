@@ -123,11 +123,11 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.post, request.FILES, instance=request.user.profile )#HTTP リクエストの内容を保持する属性
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile )#HTTP リクエストの内容を保持する属性
         if form.is_valid():
             form.save()
-            messages.success('プロフィールが正常に更新されました！')
-            return redirect ('app:user_profile', username=request.user.usernsme)
+            messages.success(request, 'プロフィールが正常に更新されました！')
+            return redirect ('app:user_profile', username=request.user.username)
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
     
@@ -135,4 +135,4 @@ def edit_profile(request):
         'form': form
     }
 
-    return render(request, 'app/edit_profile', context)
+    return render(request, 'app/edit_profile.html', context)
