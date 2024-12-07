@@ -121,7 +121,7 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
     return render(request, 'app/user_profile.html', context)
 
 @login_required
-def edit_proofile(request):
+def edit_profile(request):
     if request.method == 'POST':
         form = ProfileUpdateForm(request.post, request.FILES, instance=request.user.profile )#HTTP リクエストの内容を保持する属性
         if form.is_valid():
