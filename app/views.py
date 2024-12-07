@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from.models import Tweet,Like,User
+from.models import Tweet,Like,User,Follow
 from.forms import TweetForm,SignUpForm,ProfileUpdateForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
@@ -136,3 +136,28 @@ def edit_profile(request):
     }
 
     return render(request, 'app/edit_profile.html', context)
+
+@login_required
+@require_POST
+def follow_toggle(request,username):
+    target_user = get_object_or_404(User, username=username)
+    if target_user == request.user:
+        return JsonResponse({'error': '自分自身をふぉろーすることはできません'}, status=400)
+    
+    follow, created = Follow.objects.get_or_create(follower=request.user, following=target_user)
+
+    if not created:
+        follow.delete()
+        following=False
+
+    else:
+        following=True
+    
+    follower_count = target_user.follower.count()
+    following_count = target_user.following.count()
+
+    return JsonResponse({
+        'follow': follow,
+        'follower_count': follower_count(),
+        'following': following_count(),
+    })
