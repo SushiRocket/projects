@@ -1,10 +1,9 @@
 from django.contrib import admin
-from .models import Profile, Tweet, Like, User
+from .models import Profile, Tweet, Like
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'avatar')
+    list_display = ('user', 'avator')
 
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Tweet)
 admin.site.register(Like)
-admin.site.register(User)
