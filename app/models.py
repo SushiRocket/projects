@@ -15,7 +15,7 @@ class Tweet(models.Model):
         return self.likes.count()
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')#逆参照のためのrelated_name
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='likes')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -35,3 +35,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+
+    def __str__(self):
+        return f"{self.follower.username} follows {self.following.username}"
