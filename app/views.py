@@ -157,7 +157,7 @@ def follow_toggle(request,username):
     following_count = target_user.following.count()
 
     return JsonResponse({
-        'follow': follow,
+        'following': following,
         'follower_count': follower_count(),
-        'following': following_count(),
+        'following_count': following_count(),
     })
