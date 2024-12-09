@@ -35,6 +35,45 @@
     {% endif %}
     </div>
 
+ <!-- フォロー機能のJavaScript -->
+ {% if user != profile_user and user.is_authenticated %}
+ <script>
+     document.addEventListener('DOMContentLoaded', () => {
+         const followButton = document.getElementById('follow-button');
+         const followerCount = document.getElementById('follower-count');
+         const followingCount = document.getElementById('following-count');
+
+         if (followButton) {
+             followButton.addEventListener('click', () => {
+                 const url = "{% url 'app:follow_toggle' profile_user.username %}";
+
+                 fetch(url, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'X-CSRFToken': '{{ csrf_token }}'
+                     },
+                     body: JSON.stringify({})
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if(data.following){
+                         followButton.textContent = 'フォロー解除';
+                         followButton.classList.add('following');
+                     } else {
+                         followButton.textContent = 'フォロー';
+                         followButton.classList.remove('following');
+                     }
+                     followerCount.textContent = data.follower_count;
+                     followingCount.textContent = data.following_count;
+                 })
+                 .catch(error => console.error('Error:', error));
+             });
+         }
+     });
+    </script>
+    {% endif %}
+
     <hr>
 
     <div class="user-tweets">

@@ -13,7 +13,7 @@ def is_following(user,target_user):
 
 @register.filter
 def follower_count(user):
-    return user.followers.count()
+    return user.follower.count()
 
 @register.filter
 def following_count(user):
