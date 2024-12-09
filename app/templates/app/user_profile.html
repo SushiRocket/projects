@@ -1,7 +1,8 @@
 <!-- app/templates/app/user_profile.html -->
 
 {% extends 'app/base.html' %}
-{% load static %}
+
+{% load follow_tags %}
 
 {% block content %}
     <div class="profile-header">
@@ -17,11 +18,61 @@
             <p>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
         {% endif %}
         <p>投稿数: {{ tweets.count }}</p>
-
-        {% if user == profile_user %}
-            <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
+    {% if user != profile_user %}
+        {% if user.is_authenticated %} <!-- | はフィルターを活用するためのテンプレートタグ 変数 | フィルタ のように記述-->
+            <button id="follow-button" class="follow-button{% if user|is_following:profile_user %} following {% endif %}" >
+                {% if user|is_following:profile_user %}
+                フォロー解除
+                {% else %}
+                フォロー
+                {% endif %}
+            </button><!-- | はテンプレートタグ内で複数の条件や選択肢を記述する-->>
+            <span id="follower-count">{{ profile_user|follower_count}}</span>フォロワー
+            <span id="following-count">{{ profile_user|following_count}}</span>フォロー中
         {% endif %}
+    {% else %}
+        <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
+    {% endif %}
     </div>
+
+ <!-- フォロー機能のJavaScript -->
+ {% if user != profile_user and user.is_authenticated %}
+ <script>
+     document.addEventListener('DOMContentLoaded', () => {
+         const followButton = document.getElementById('follow-button');
+         const followerCount = document.getElementById('follower-count');
+         const followingCount = document.getElementById('following-count');
+
+         if (followButton) {
+             followButton.addEventListener('click', () => {
+                 const url = "{% url 'app:follow_toggle' profile_user.username %}";
+
+                 fetch(url, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'X-CSRFToken': '{{ csrf_token }}'
+                     },
+                     body: JSON.stringify({})
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if(data.following){
+                         followButton.textContent = 'フォロー解除';
+                         followButton.classList.add('following');
+                     } else {
+                         followButton.textContent = 'フォロー';
+                         followButton.classList.remove('following');
+                     }
+                     followerCount.textContent = data.follower_count;
+                     followingCount.textContent = data.following_count;
+                 })
+                 .catch(error => console.error('Error:', error));
+             });
+         }
+     });
+    </script>
+    {% endif %}
 
     <hr>
 

@@ -15,6 +15,7 @@ urlpatterns = [
     path('tweet/<int:pk>/like', views.like_toggle,name='like_toggle'),
     path('user/<str:username>/', views.user_profile, name='user_profile'),
     path('profile/edit', views.edit_profile, name='edit_profile'),
+    path('user/<str:username>/follow', views.follow_toggle, name='follow_toggle'),
 
     #認証関連
     path('login/', auth_views.LoginView.as_view(template_name='app/login.html'), name='login'),
