@@ -2,6 +2,8 @@
 
 {% extends 'app/base.html' %}
 
+{% load follow_tags %}
+
 {% block content %}
     <div class="profile-header">
         {% if profile_user.profile.avator %}
@@ -24,9 +26,10 @@
                 {% else %}
                 フォロー
                 {% endif %}
-            </button><!--{% | %}はテンプレートタグ内で複数の条件や選択肢を記述する-->>
+            </button><!-- | はテンプレートタグ内で複数の条件や選択肢を記述する-->>
             <span id="follower-count">{{ profile_user|follower_count}}</span>フォロワー
             <span id="following-count">{{ profile_user|following_count}}</span>フォロー中
+        {% endif %}
     {% else %}
         <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
     {% endif %}
