@@ -158,6 +158,6 @@ def follow_toggle(request,username):
 
     return JsonResponse({
         'following': following,
-        'follower_count': follower_count(),
-        'following_count': following_count(),
+        'follower_count': follower_count,
+        'following_count': following_count,
     })
