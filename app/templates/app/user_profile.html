@@ -17,13 +17,19 @@
             <p>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
         {% endif %}
         <p>投稿数: {{ tweets.count }}</p>
+    {% if user != profile_user %}
+        {% if user.is_authenticated %} <!--{% | %}はフィルターを活用するためのテンプレートタグ{% 変数 | フィルタ %}のように記述-->
+            <button id="follow-button" class="follow-button{% if user|is_following:profile_user %} following {% endif %}" >
+                {% if user|is_following:profile_user %}
+                フォロー解除
+                {% else %}
+                フォロー
+                {% endif %}
+            </button><!--{% | %}はテンプレートタグ内で複数の条件や選択肢を記述する-->>
 
-    {% if user.is_authenticated and user != profile_user %}
-        <button class="follow-button"></button>
-
-        {% if user == profile_user %}
-            <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
-        {% endif %}
+    {% else %}
+        <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
+    {% endif %}
     </div>
 
     <hr>
