@@ -26,7 +26,8 @@
                 フォロー
                 {% endif %}
             </button><!--{% | %}はテンプレートタグ内で複数の条件や選択肢を記述する-->>
-
+            <span id="follower-count">{{ profile_user|follower_count}}</span>フォロワー
+            <span id="following-count">{{ profile_user|following_count}}</span>フォロー中
     {% else %}
         <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
     {% endif %}
