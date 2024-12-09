@@ -1,7 +1,6 @@
 <!-- app/templates/app/user_profile.html -->
 
 {% extends 'app/base.html' %}
-{% load static %}
 
 {% block content %}
     <div class="profile-header">
@@ -18,7 +17,7 @@
         {% endif %}
         <p>投稿数: {{ tweets.count }}</p>
     {% if user != profile_user %}
-        {% if user.is_authenticated %} <!--{% | %}はフィルターを活用するためのテンプレートタグ{% 変数 | フィルタ %}のように記述-->
+        {% if user.is_authenticated %} <!-- | はフィルターを活用するためのテンプレートタグ 変数 | フィルタ のように記述-->
             <button id="follow-button" class="follow-button{% if user|is_following:profile_user %} following {% endif %}" >
                 {% if user|is_following:profile_user %}
                 フォロー解除
