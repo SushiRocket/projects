@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from.models import Tweet,Profile
+from.models import Tweet,Profile,Comments
 
 class TweetForm(forms.ModelForm):
     content=forms.CharField(
@@ -35,10 +35,22 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['avator']
-        wigets ={
+        widgets ={
             'avator': forms.ClearableFileInput(attrs={
                 'class': 'profile-input',
                 'placeholder': 'ファイルを選択してください',
                 'accept': '.jpg, .png, .gif',
             })
         }
+
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        widget = forms.Textarea(attrs={
+            'placeholder': 'コメントを入力.....',
+            'rows': 3,
+        }),
+        max_length = 500,
+    )
+    class Meta:
+        model = Comments
+        fields = ['content']
