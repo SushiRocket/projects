@@ -2,7 +2,7 @@ from django import template
 from app.models import Follow
 from django.contrib.auth.models import User
 
-register = template.Libraryibrary()#カスタムフィルタやテンプレートタグを登録し、それらをテンプレート内で使用できるようにする。
+register = template.Library()#カスタムフィルタやテンプレートタグを登録し、それらをテンプレート内で使用できるようにする。
 
 @register.filter #デコレータとして関数の上に付けることで、その関数をテンプレート内でフィルタとして使用可能にする。
 def is_following(user,target_user):
