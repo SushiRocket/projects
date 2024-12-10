@@ -40,6 +40,11 @@
                             <p>{{ comment.user.username }}</p>
                             <p>{{ comment.content }}</p>
                             <p>{{ comment.created_at|date:"Y年m月d日 H:i" }}</p>
+                            {% if user == comment.user %}
+                                <form method="POST" action="{% url 'app:tweet_delete' comment.pk%}">
+                                    <button type="submit">コメントを削除する</button>
+                                </form>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
