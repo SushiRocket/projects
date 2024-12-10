@@ -31,6 +31,36 @@
         <p>いいねするにはログインしてください。</p>
     {% endif %}
 
+    <section class="comment-index">
+        <h3>コメント一覧</h3>
+            {% if comments %}
+                <ul class="comment-list">
+                    {% for comment in comments %}
+                        <li class="comment">
+                            <p>{{ comment.user.username }}</p>
+                            <p>{{ comment.content }}</p>
+                            <p>{{ comment.created_at|date:"Y年m月d日 H:i" }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>コメントはありません。</p>
+            {% endif %}
+    </section>
+
+    <section class="comment-form">
+        <h3>コメントを投稿</h3>
+            {% if user.is_authenticated %}
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit">コメント</button>
+                </form>
+            {% else %}
+                <p>コメントを登録するには<a href="{% url 'app:login' %}">ログイン</a>が必要です。</p>
+            {% endif %}
+    </section>
+
     <!-- CSRFトークンとツイートIDをJavaScriptに渡す -->
     <script>
         const csrfToken = '{{ csrf_token }}';

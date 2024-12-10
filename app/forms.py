@@ -1,12 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from.models import Tweet,Profile,Comments
+from.models import Tweet,Profile,Comment
 
 class TweetForm(forms.ModelForm):
     content=forms.CharField(
         widget=forms.Textarea,
-        max_length='1000',
+        max_length=1000,
         required=True,
         help_text='今の気持ちをつぶやこう',
     )
@@ -52,5 +52,5 @@ class CommentForm(forms.ModelForm):
         max_length = 500,
     )
     class Meta:
-        model = Comments
+        model = Comment
         fields = ['content']

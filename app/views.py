@@ -6,8 +6,9 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from.models import Tweet,Like,User,Follow
-from.forms import TweetForm,SignUpForm,ProfileUpdateForm
+from django.contrib.auth.models import User
+from.models import Tweet,Like,Follow,Comment
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 
@@ -64,12 +65,45 @@ def tweet_detail(request, pk):
     if request.user.is_authenticated:
         is_liked = Like.objects.filter(user=request.user, tweet=tweet).exists() #Likeモデルに紐づく投稿があればis_like=Trueに
 
-        context = {#contextでテンプレートにviewを辞書でわたす
-            'tweet': tweet,
-            'is_liked': is_liked,
-            'like_count': tweet.likes.count(),
-        }
-        return render(request, 'app/tweet_detail.html', context)
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden('ログインが必要です。')
+
+        comment_form = CommentForm(request.POST)
+
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.tweet = tweet
+            comment.save()
+            messages.success(request,'コメントが投稿されました！')
+            return redirect('app:tweet_detail', pk=pk)
+        else:
+            messages.error(request, 'コメントの投稿に失敗しました。内容を確認してください。')
+
+    else:
+        comment_form = CommentForm()
+
+    comments = tweet.comments.all().order_by('-created_at')
+
+    context = {#contextでテンプレートにviewを辞書でわたす
+        'tweet': tweet,
+        'is_liked': is_liked,
+        'like_count': tweet.likes.count(),
+        'comments': comments,
+        'comment_form': comment_form,
+    }
+    return render(request, 'app/tweet_detail.html', context)
+
+@login_required
+@require_POST
+def delete_comment(request,pk):
+    comment = get_object_or_404(Comment, pk=pk, user=request.user)
+    tweet_pk = comment.tweet.pk
+    comment.delete()
+    messages.success(request, 'コメントが削除されました。')
+
+    return redirect('app:tweet_detail', pk=tweet_pk)
 
 @login_required
 def tweet_edit(request,pk):
