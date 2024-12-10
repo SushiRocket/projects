@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from.models import Tweet,Profile,Comments
+from.models import Tweet,Profile,Comment
 
 class TweetForm(forms.ModelForm):
     content=forms.CharField(

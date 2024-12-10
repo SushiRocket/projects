@@ -78,19 +78,19 @@ def tweet_detail(request, pk):
             messages.success(request,'コメントが投稿されました！')
             return redirect('app:tweet_detail', pk=pk)
 
-        else:
-            comment = comment_form()
+    else:
+        comment_form = comment_form()
 
-        comments = tweet.comments.all().order_by('-created_at')
+    comments = tweet.comments.all().order_by('-created_at')
 
-        context = {#contextでテンプレートにviewを辞書でわたす
-            'tweet': tweet,
-            'is_liked': is_liked,
-            'like_count': tweet.likes.count(),
-            'comments': comments,
-            'comment_form': comment_form,
-        }
-        return render(request, 'app/tweet_detail.html', context)
+    context = {#contextでテンプレートにviewを辞書でわたす
+        'tweet': tweet,
+        'is_liked': is_liked,
+        'like_count': tweet.likes.count(),
+        'comments': comments,
+        'comment_form': comment_form,
+    }
+    return render(request, 'app/tweet_detail.html', context)
 
 @login_required
 def tweet_edit(request,pk):
