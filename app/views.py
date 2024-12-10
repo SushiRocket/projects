@@ -96,6 +96,16 @@ def tweet_detail(request, pk):
     return render(request, 'app/tweet_detail.html', context)
 
 @login_required
+@require_POST
+def delete_comment(request,pk):
+    comment = get_object_or_404(Comment, pk=pk, user=request.user)
+    tweet_pk = comment.tweet.pk
+    comment.delete()
+    messages.success(request, 'コメントが削除されました。')
+
+    return redirect('app:tweet_detail', pk=tweet_pk)
+
+@login_required
 def tweet_edit(request,pk):
     tweet = get_object_or_404(Tweet,pk=pk)
     if tweet.author != request.user:
