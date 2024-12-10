@@ -70,7 +70,7 @@ def tweet_detail(request, pk):
         
         comment_form = CommentForm(request.POST)
 
-        if comment_form.is_valid()
+        if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.user = request.user
             comment.tweet = tweet
