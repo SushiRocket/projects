@@ -6,7 +6,7 @@ from.models import Tweet,Profile,Comments
 class TweetForm(forms.ModelForm):
     content=forms.CharField(
         widget=forms.Textarea,
-        max_length='1000',
+        max_length=1000,
         required=True,
         help_text='今の気持ちをつぶやこう',
     )
