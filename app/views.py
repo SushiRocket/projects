@@ -67,7 +67,7 @@ def tweet_detail(request, pk):
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return HttpResponseForbidden('ログインが必要です。')
-        
+
         comment_form = CommentForm(request.POST)
 
         if comment_form.is_valid():
@@ -75,20 +75,20 @@ def tweet_detail(request, pk):
             comment.user = request.user
             comment.tweet = tweet
             comment.save()
-            messages.success('コメントが投稿されました！')
+            messages.success(request,'コメントが投稿されました！')
             return redirect('app:tweet_detail', pk=pk)
 
         else:
             comment = comment_form()
 
-        comments = Tweet.comments.all().order_by('-created_at')
+        comments = tweet.comments.all().order_by('-created_at')
 
         context = {#contextでテンプレートにviewを辞書でわたす
             'tweet': tweet,
             'is_liked': is_liked,
             'like_count': tweet.likes.count(),
             'comments': comments,
-            'commen_form': comment_form,
+            'comment_form': comment_form,
         }
         return render(request, 'app/tweet_detail.html', context)
 

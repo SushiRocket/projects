@@ -32,7 +32,7 @@
     {% endif %}
 
     <section class="comment-index">
-        <h2>コメント一覧</h2>
+        <h3>コメント一覧</h3>
             {% if comment %}
                 <ul class="comment-list">
                     {% for comment in comments %}
@@ -45,6 +45,19 @@
                 </ul>
             {% else %}
                 <p>コメントはありません。</p>
+            {% endif %}
+    </section>
+
+    <section class="comment-form">
+        <h3>コメントを投稿</h3>
+            {% if user.is_authenticated %}
+                <form method="POST" action="">
+                    {{ csrf_token }}
+                    {{ comment_form.as_p }}
+                    <button type="submit">コメント</button>
+                </form>
+            {% else %}
+                <p>コメントを登録するには<a href="{% url 'app:login' %}">ログイン</a>が必要です。</p>
             {% endif %}
     </section>
 
