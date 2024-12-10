@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from.models import Tweet,Like,User,Follow
-from.forms import TweetForm,SignUpForm,ProfileUpdateForm
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 
@@ -64,10 +64,31 @@ def tweet_detail(request, pk):
     if request.user.is_authenticated:
         is_liked = Like.objects.filter(user=request.user, tweet=tweet).exists() #Likeモデルに紐づく投稿があればis_like=Trueに
 
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden('ログインが必要です。')
+        
+        comment_form = CommentForm(request.POST)
+
+        if comment_form.is_valid()
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.tweet = tweet
+            comment.save()
+            messages.success('コメントが投稿されました！')
+            return redirect('app:tweet_detail', pk=pk)
+
+        else:
+            comment = comment_form()
+
+        comments = Tweet.comments.all().order_by('-created_at')
+
         context = {#contextでテンプレートにviewを辞書でわたす
             'tweet': tweet,
             'is_liked': is_liked,
             'like_count': tweet.likes.count(),
+            'comments': comments,
+            'commen_form': comment_form,
         }
         return render(request, 'app/tweet_detail.html', context)
 
