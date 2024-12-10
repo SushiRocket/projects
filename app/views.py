@@ -6,7 +6,8 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from.models import Tweet,Like,User,Follow
+from django.contrib.auth.models import User
+from.models import Tweet,Like,Follow,Comment
 from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
@@ -77,9 +78,11 @@ def tweet_detail(request, pk):
             comment.save()
             messages.success(request,'コメントが投稿されました！')
             return redirect('app:tweet_detail', pk=pk)
+        else:
+            messages.error(request, 'コメントの投稿に失敗しました。内容を確認してください。')
 
     else:
-        comment_form = comment_form()
+        comment_form = CommentForm()
 
     comments = tweet.comments.all().order_by('-created_at')
 

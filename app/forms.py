@@ -52,5 +52,5 @@ class CommentForm(forms.ModelForm):
         max_length = 500,
     )
     class Meta:
-        model = Comments
+        model = Comment
         fields = ['content']
