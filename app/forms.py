@@ -50,7 +50,31 @@ class CommentForm(forms.ModelForm):
             'rows': 3,
         }),
         max_length = 500,
+        required=True,
     )
     class Meta:
         model = Comment
         fields = ['content']
+
+class CommentEditForm(forms.ModelForm):
+    content = forms.CharField(
+        widget = forms.Textarea(attrs={
+            'placeholder': 'コメントを編集.....',
+            'row': 3,
+        }),
+        max_length=500,
+        required=True,
+    )
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+    def claen_parent(self):
+        parent_id = self.cleaned_data.get('parent')
+        if parent_id:
+            try:
+                parent_comment = Comment.objects.get(pk=parent_id)
+            except Comment.DoesNotExist:
+                raise forms.ValidationError('親コメントが存在しません。')
+            return parent_comment
+        return None

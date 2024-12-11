@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from.models import Tweet,Like,Follow,Comment
-from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 
@@ -84,7 +84,7 @@ def tweet_detail(request, pk):
     else:
         comment_form = CommentForm()
 
-    comments = tweet.comments.all().order_by('-created_at')
+    comments = tweet.comments.filter(parent__isnull=True).order_by('-created_at')#親コメントがない（トップレベルの）コメントのみを取得
 
     context = {#contextでテンプレートにviewを辞書でわたす
         'tweet': tweet,
@@ -96,14 +96,62 @@ def tweet_detail(request, pk):
     return render(request, 'app/tweet_detail.html', context)
 
 @login_required
-@require_POST
 def delete_comment(request,pk):
     comment = get_object_or_404(Comment, pk=pk, user=request.user)
     tweet_pk = comment.tweet.pk
-    comment.delete()
-    messages.success(request, 'コメントが削除されました。')
+    if comment.user != request.user:
+        return HttpResponseForbidden('あなたはこのコメントを削除する権限がありません。')
+    if request.method == 'POST':
+        if request.user ==comment.user:
+            comment.delete()
+            messages.success(request, 'コメントが削除されました。')
+            return redirect('app:tweet_detail', pk=tweet_pk)
+    else:
+        return render(request, 'app/delete_comment.html', {'comment': comment})
 
-    return redirect('app:tweet_detail', pk=tweet_pk)
+@login_required
+def edit_comment(request,pk):
+    comment = get_object_or_404(Comment, pk=pk, user=request.user)
+    if comment.user != request.user:
+        return HttpResponseForbidden('あなたはこのコメントを編集する権限がありません。')
+    if request.method == 'POST':
+        form = CommentEditForm(request.POST, instance=comment) #ユーザーの入力を渡す
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'コメントが更新されました！')
+            return redirect('app:tweet_detail', pk=comment.tweet.pk)
+    else:
+        form = CommentEditForm(instance=comment)
+    return render(request, 'app/edit_comment.html' , {'form': form})
+
+@login_required
+def add_reply(request, pk):
+
+    #特定のコメントに対する返信ビュー
+    parent_comment = get_object_or_404(Comment, pk=pk)
+    tweet = parent_comment.tweet
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)#ユーザーの入力を渡す
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.user = request.user
+            reply.tweet = tweet
+            reply.parent = parent_comment
+            reply.save()
+            messages.success(request, '返信が投稿されました！')
+            return redirect('app:tweet_detail', pk=tweet.pk)
+        else:
+            messages.error(request, '返信の投稿に失敗しました。内容を確認してください。')
+
+    else:
+        form = CommentForm(initial={'parent': parent_comment.pk})
+    
+    context = {
+        'form': form,
+        'parent_comment': parent_comment,
+    }
+    return render(request, 'app/add_reply.html', context)
 
 @login_required
 def tweet_edit(request,pk):

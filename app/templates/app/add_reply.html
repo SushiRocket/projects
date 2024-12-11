@@ -1,0 +1,15 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<h2>コメントに返信</h2>
+    <div class="parent-comment">
+        <p>{{ parent_comment.user.username }}</p>
+        <p>{{ parent_comment.content }}</p>
+        <p>{{ parent_comment.created_at|date:"Y年m月d日 H:i" }}</p>
+    </div>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">返信</button>
+    </form>
+{% endblock %}
