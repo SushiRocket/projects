@@ -1,0 +1,26 @@
+<li class="comment">
+    <div class="comment-content">
+        <p>{{ comment.user.username }}</p>
+        <p>{{ comment.content }}</p>
+        <p>{{ comment.created_at|date:"Y年m月d日 H:i" }}</p>
+    </div>
+    <div comment-actions>
+        {% if user.is_authenticatd %}
+        <a href="{% url 'app:add_reply' comment.pk %}">返信</a>
+            {% if user == comment.user %}
+                <a href="{% url 'app:edit_comment' comment.pk %}">編集</a>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit">削除</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% if comment.replies.all %}
+        <ul class="replies">
+            {% for reply in comment.replies.all %}
+                {% include 'app/comment_partial.html' with comment=reply %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>
