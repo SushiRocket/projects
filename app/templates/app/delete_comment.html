@@ -6,6 +6,6 @@
         {% csrf_token %}
         {{ form.as_p}}
         <button type="submit">削除</button>
-        <a href="{% url 'app:tweet_detail' tweet.pk%}">キャンセル</a>
+        <a href="{% url 'app:tweet_detail' comment.tweet.pk%}">キャンセル</a>
     </form>
 {% endblock %}

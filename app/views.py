@@ -96,14 +96,18 @@ def tweet_detail(request, pk):
     return render(request, 'app/tweet_detail.html', context)
 
 @login_required
-@require_POST
 def delete_comment(request,pk):
     comment = get_object_or_404(Comment, pk=pk, user=request.user)
     tweet_pk = comment.tweet.pk
-    comment.delete()
-    messages.success(request, 'コメントが削除されました。')
-
-    return redirect('app:tweet_detail', pk=tweet_pk)
+    if comment.user != request.user:
+        return HttpResponseForbidden('あなたはこのコメントを削除する権限がありません。')
+    if request.method == 'POST':
+        if request.user ==comment.user:
+            comment.delete()
+            messages.success(request, 'コメントが削除されました。')
+            return redirect('app:tweet_detail', pk=tweet_pk)
+    else:
+        return render(request, 'app/delete_comment.html', {'comment': comment})
 
 @login_required
 def edit_comment(request,pk):
@@ -129,7 +133,7 @@ def add_reply(request, pk):
 
     if request.method == 'POST':
         form = CommentForm(request.POST)#ユーザーの入力を渡す
-        if form.is_valid(commit=False):
+        if form.is_valid():
             reply = form.save(commit=False)
             reply.user = request.user
             reply.tweet = tweet

@@ -11,10 +11,7 @@
         <a href="{% url 'app:add_reply' comment.pk %}">返信</a>
             {% if user == comment.user %}
                 <a href="{% url 'app:edit_comment' comment.pk %}">編集</a>
-                <form method="POST" action="{% url 'app:delete_comment' comment.pk %}">
-                    {% csrf_token %}
-                    <button type="submit">削除</button>
-                </form>
+                <a href="{% url 'app:delete_comment' comment.pk %}">削除</a>
             {% endif %}
         {% endif %}
     </div>
