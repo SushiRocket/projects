@@ -1,0 +1,10 @@
+{% extends 'app:base.html' %}
+
+{% block content %}
+<h2>コメント編集</h2>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ forms.as_p }}
+        <button type="submit">更新</button>
+    </form>
+{% endblock %}

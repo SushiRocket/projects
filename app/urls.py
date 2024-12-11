@@ -17,6 +17,7 @@ urlpatterns = [
     path('profile/edit', views.edit_profile, name='edit_profile'),
     path('user/<str:username>/follow', views.follow_toggle, name='follow_toggle'),
     path('user/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
+    path('comment/<int:pk>/edit', views.edit_comment, name='edit_comment'),
 
     #認証関連
     path('login/', auth_views.LoginView.as_view(template_name='app/login.html'), name='login'),
