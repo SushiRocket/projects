@@ -78,3 +78,13 @@ class CommentEditForm(forms.ModelForm):
                 raise forms.ValidationError('親コメントが存在しません。')
             return parent_comment
         return None
+
+class TweetSearchForm(forms.ModelForm):
+    query = forms.CharField(
+        label='検索',
+        max_length=100,
+        required=False,
+        widget= forms.TextInput(attrs={
+            'placeholder': 'キーワードで検索'
+        }),
+    )
