@@ -45,6 +45,7 @@
                                     {% csrf_token %}
                                     <button type="submit">コメントを削除する</button>
                                 </form>
+                                <a href="{% url 'app:edit_comment' % comment.pk}">編集する</a>
                             {% endif %}
                         </li>
                     {% endfor %}
