@@ -1,0 +1,11 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <h2>コメントを削除しますか？</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p}}
+        <button type="submit">削除</button>
+        <a href="{% url 'app:tweet_detail' tweet.pk%}">キャンセル</a>
+    </form>
+{% endblock %}
