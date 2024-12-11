@@ -84,7 +84,7 @@ def tweet_detail(request, pk):
     else:
         comment_form = CommentForm()
 
-    comments = tweet.comments.all().order_by('-created_at')
+    comments = tweet.comments.filter(parent__isnull=True).order_by('-created_at')#親コメントがない（トップレベルの）コメントのみを取得
 
     context = {#contextでテンプレートにviewを辞書でわたす
         'tweet': tweet,
