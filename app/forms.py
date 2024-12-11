@@ -50,6 +50,20 @@ class CommentForm(forms.ModelForm):
             'rows': 3,
         }),
         max_length = 500,
+        required=True,
+    )
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+class CommentEditForm(forms.ModelForm):
+    content = forms.CharField(
+        widget = forms.Textarea(attrs={
+            'placeholder': 'コメントを編集.....',
+            'row': 3,
+        }),
+        max_length=500,
+        required=True,
     )
     class Meta:
         model = Comment
