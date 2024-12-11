@@ -59,8 +59,12 @@ class Notification(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments') #コメントしたユーザー
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE, related_name='comments') #コメントされたツイート
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     content = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} commented on {self.tweet.id}"
+    
+    def is_reply(self):
+        return self.parent is not None #is_reply メソッドは、Djangoモデルにおける便利なインスタンスメソッドの一つであり、特定のコメントが返信（リプライ）であるかどうかを判定

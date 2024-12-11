@@ -111,7 +111,7 @@ def edit_comment(request,pk):
     if comment.user != request.user:
         return HttpResponseForbidden('あなたはこのコメントを編集する権限がありません。')
     if request.method == 'POST':
-        form = CommentEditForm(request.POSt, instance=comment) #ユーザーの入力を渡す
+        form = CommentEditForm(request.POST, instance=comment) #ユーザーの入力を渡す
         if form.is_valid():
             form.save()
             messages.success(request, 'コメントが更新されました！')
