@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from.models import Tweet,Like,Follow,Comment
-from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 
@@ -104,6 +104,22 @@ def delete_comment(request,pk):
     messages.success(request, 'コメントが削除されました。')
 
     return redirect('app:tweet_detail', pk=tweet_pk)
+
+@login_required
+def edit_comment(request,pk):
+    comment = get_object_or_404(Comment, pk=pk, user=request.user)
+    if comment.user != request.user:
+        return HttpResponseForbidden('あなたはこのコメントを編集する権限がありません。')
+    if request.method == 'POST':
+        form = CommentEditForm(request.POst, instance=comment) #ユーザーの入力を渡す
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'コメントが更新されました！')
+            return redirect('app:tweet_detail', pk=comment.tweet.pk)
+    else:
+        form = CommentEditForm(instance=comment)
+    return render('app/edit_comment.html' , {'form': form})
+
 
 @login_required
 def tweet_edit(request,pk):
