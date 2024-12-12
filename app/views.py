@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from.models import Tweet,Like,Follow,Comment
-from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm,TweetSearchForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 
@@ -21,6 +21,11 @@ class IndexView(ListView):
     context_object_name='tweets'
     ordering=['-created_at']
     paginate_by=5
+
+def search_tweets(request):
+    form = TweetSearchForm(request.GET or None)
+    
+
 
 @login_required
 def tweet_create(request):
@@ -146,7 +151,7 @@ def add_reply(request, pk):
 
     else:
         form = CommentForm(initial={'parent': parent_comment.pk})
-    
+
     context = {
         'form': form,
         'parent_comment': parent_comment,
