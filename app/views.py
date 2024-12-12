@@ -31,7 +31,7 @@ def tweet_search(request):
         query = form.cleaned_data.get('query')
         if query:
             results = Tweet.objects.filter(
-                Q(content__icontains=query) | Q(author__username_icontains=query)
+                Q(content__icontains=query) | Q(author__username__icontains=query)
             ).distinct().order_by('-created_at')
     context = {
         'form': form,

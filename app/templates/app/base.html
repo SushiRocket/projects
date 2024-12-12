@@ -15,7 +15,6 @@
             <nav class="navbar">
                 <a href="{% url 'app:index' %}">HOME</a>
                 <form method="get" action="{% url 'app:tweet_search' %}">
-                    {% csrf_token %}
                     {{ search_form.query }}
                     <button type="submit">検索</button>
                 </form>

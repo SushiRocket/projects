@@ -10,7 +10,7 @@
                 <ul class="tweet-list">
                     {% for tweet in results %}
                         <li>
-                            <a href="{% url 'app:tweet_detail' tweet.pk %}">{{ tweet.username }}:{{ tweet.content }}
+                            <a href="{% url 'app:tweet_detail' tweet.pk %}">{{ tweet.author.username }}:{{ tweet.content }}
                                 <br>
                                 {{ tweet.created_at|date:"Y年m月d日 H:i" }}
                             </a>
