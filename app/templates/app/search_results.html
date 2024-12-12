@@ -1,0 +1,24 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <h2>検索結果</h2>
+        {% if query %}
+            <p>{{ query }}で検索しました。</p>
+            {% if results %}
+                <ul class="tweet-list">
+                    {% for tweet in results %}
+                        <li>
+                            <a href="{% url 'app:tweet_detail' tweet.pk %}">{{ tweet.username }}:{{ tweet.content }}
+                                <br>
+                                {{ tweet.created_at|date:"Y年m月d日 H:i" }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>一致するツイートがありません。</p>
+            {% endif %}
+        {% else %}
+            <p>キーワードが入力されていません。</p>
+        {% endif %}
+{% endblock %}

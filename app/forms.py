@@ -79,12 +79,12 @@ class CommentEditForm(forms.ModelForm):
             return parent_comment
         return None
 
-class TweetSearchForm(forms.ModelForm):
+class TweetSearchForm(forms.Form):
     query = forms.CharField(
         label='検索',
         max_length=100,
         required=False,
         widget= forms.TextInput(attrs={
-            'placeholder': 'キーワードで検索'
+            'placeholder': 'キーワードで検索',
         }),
     )

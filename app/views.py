@@ -40,8 +40,6 @@ def tweet_search(request):
     }
     return render(request, 'app/search_results.html', context)
 
-
-
 @login_required
 def tweet_create(request):
     if request.method == 'POST':
