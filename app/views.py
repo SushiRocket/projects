@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
+from django.db.models import Q
 from django.views.generic import ListView
 from django.contrib.auth import login
 from django.views.decorators.http import require_POST
@@ -22,9 +23,23 @@ class IndexView(ListView):
     ordering=['-created_at']
     paginate_by=5
 
-def search_tweets(request):
-    form = TweetSearchForm(request.GET or None)
-    
+def tweet_search(request):
+    form = TweetSearchForm(request.GET or None) #まずは初期化。formやqueryやresultsを定義。
+    query = ''
+    results = []
+    if form.is_valid():
+        query = form.cleaned_data.get('query')
+        if query:
+            results = Tweet.objects.filter(
+                Q(content_icontains=query) | Q(auther_username_icontains=query)
+            ).distinct().order_by('-created_at')
+    context = {
+        'form': form,
+        'query': query,
+        'results':results,
+    }
+    return render(request, 'app/search_results.html', context)
+
 
 
 @login_required
