@@ -12,6 +12,7 @@ from.models import Tweet,Like,Follow,Comment
 from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm,TweetSearchForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 
 
 # Create your views here.
@@ -33,10 +34,21 @@ def tweet_search(request):
             results = Tweet.objects.filter(
                 Q(content__icontains=query) | Q(author__username__icontains=query)
             ).distinct().order_by('-created_at')
+
+    paginator = paginator(results=3)#1ページあたりの表示ツイート数
+    page = request.GET.get('page')#urlパラメータからページ番号を取得
+
+    try:
+        tweets = paginator.page(page)
+    except PageNotAnInteger:
+        tweets = paginator.page(1)
+    except EmptyPage:
+        tweets = paginator.page(paginator.num_pages)#総ページ数を取得
+
     context = {
         'form': form,
         'query': query,
-        'results':results,
+        'tweets':tweets,
     }
     return render(request, 'app/search_results.html', context)
 
