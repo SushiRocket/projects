@@ -72,9 +72,19 @@ class CommentEditForm(forms.ModelForm):
     def claen_parent(self):
         parent_id = self.cleaned_data.get('parent')
         if parent_id:
-            try:
-                parent_comment = Comment.objects.get(pk=parent_id)
-            except Comment.DoesNotExist:
+            try: #エラーが発生してもプログラムを停止させずに処理を続けるための方法。
+                parent_comment = Comment.objects.get(pk=parent_id)#エラーが起きる可能性のあるコード
+            except Comment.DoesNotExist:#エラー発生時のコード
                 raise forms.ValidationError('親コメントが存在しません。')
             return parent_comment
         return None
+
+class TweetSearchForm(forms.Form):
+    query = forms.CharField(
+        label='検索',
+        max_length=100,
+        required=False,
+        widget= forms.TextInput(attrs={
+            'placeholder': 'キーワードで検索',
+        }),
+    )

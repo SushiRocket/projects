@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
+from django.db.models import Q
 from django.views.generic import ListView
 from django.contrib.auth import login
 from django.views.decorators.http import require_POST
@@ -8,9 +9,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from.models import Tweet,Like,Follow,Comment
-from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm
+from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm,TweetSearchForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 
 
 # Create your views here.
@@ -21,6 +23,34 @@ class IndexView(ListView):
     context_object_name='tweets'
     ordering=['-created_at']
     paginate_by=5
+
+def tweet_search(request):
+    form = TweetSearchForm(request.GET or None) #まずは初期化。formやqueryやresultsを定義。
+    query = ''
+    results = []
+    if form.is_valid():
+        query = form.cleaned_data.get('query')
+        if query:
+            results = Tweet.objects.filter(
+                Q(content__icontains=query) | Q(author__username__icontains=query)
+            ).distinct().order_by('-created_at')
+
+    paginator = paginator(results=3)#1ページあたりの表示ツイート数
+    page = request.GET.get('page')#urlパラメータからページ番号を取得
+
+    try:
+        tweets = paginator.page(page)
+    except PageNotAnInteger:
+        tweets = paginator.page(1)
+    except EmptyPage:
+        tweets = paginator.page(paginator.num_pages)#総ページ数を取得
+
+    context = {
+        'form': form,
+        'query': query,
+        'tweets':tweets,
+    }
+    return render(request, 'app/search_results.html', context)
 
 @login_required
 def tweet_create(request):
@@ -146,7 +176,7 @@ def add_reply(request, pk):
 
     else:
         form = CommentForm(initial={'parent': parent_comment.pk})
-    
+
     context = {
         'form': form,
         'parent_comment': parent_comment,
