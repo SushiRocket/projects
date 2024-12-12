@@ -6,9 +6,9 @@
     <h2>検索結果</h2>
         {% if query %}
             <p>{{ query }}で検索しました。</p>
-            {% if results %}
+            {% if tweets %}
                 <ul class="tweet-list">
-                    {% for tweet in results %}
+                    {% for tweet in tweets %}
                         <li>
                             <a href="{% url 'app:tweet_detail' tweet.pk %}">{{ tweet.author.username }}:{{ tweet.content }}
                                 <br>
