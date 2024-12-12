@@ -35,7 +35,7 @@ def tweet_search(request):
                 Q(content__icontains=query) | Q(author__username__icontains=query)
             ).distinct().order_by('-created_at')
 
-    paginator = paginator(results=3)#1ページあたりの表示ツイート数
+    paginator = Paginator(results,3)#1ページあたりの表示ツイート数
     page = request.GET.get('page')#urlパラメータからページ番号を取得
 
     try:

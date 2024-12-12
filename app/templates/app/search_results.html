@@ -17,10 +17,29 @@
                         </li>
                     {% endfor %}
                 </ul>
+
+                <div class="pagination">
+                    <span>
+                        {% if tweets.has_previous %}
+                        <a href="?query={{ query }}&page=1">&laquo; 最初</a>
+                        <a href="?query={{ query }}&page={{ tweets.previous_page_number }}">前へ</a>
+                        {% endif %}
+
+                        <span>
+                            ページ{{ tweets.number }} / {{ tweets.paginator.num_pages }}
+                        </span>
+
+                        {% if tweets.has_next %}
+                        <a href="?query={{ query }}&page={{ tweets.next_page_number }}">次へ</a>
+                        <a href="?query={{ query }}&page={{ tweets.paginator.num_pages }}">最後 &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
             {% else %}
                 <p>一致するツイートがありません。</p>
             {% endif %}
         {% else %}
             <p>キーワードが入力されていません。</p>
         {% endif %}
+
 {% endblock %}

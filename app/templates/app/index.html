@@ -18,6 +18,9 @@
     </li>
 {% endfor %}
 
+
+ <!--ListViewとpaginate_by属性を用いた場合、page_obj・is_paginated・paginatorといったコンテキスト変数はDjangoが自動的にテンプレートへ渡す。--->
+
 {% if is_paginated %}
   <div class="pagination">
     <ul class="pagination">
