@@ -223,6 +223,13 @@ def like_toggle(request,pk):
 
 def user_profile(request, username): #URLからusernameを取得。path('user/<str:username>/', views.user_profile, name='user_profile')
     user = get_object_or_404(User, username=username)
+
+    if section == 'comments':
+        comments = Comment.objects.filter(user=user).select_related('tweets').order_by('-created_at')
+        tweets = [comment.tweet for comment in comments]
+
+        
+
     tweets = Tweet.objects.filter(author=user).order_by('-created_at')
 
     context = { #テンプレートに辞書で返す
