@@ -7,16 +7,14 @@ services:
       POSTGRES_PASSWORD: testpass
     volumes:
       - db-data:/var/lib/postgresql/data
-  radis:
+  redis:
     image: redis:7
-    port:
+    ports:
       - "6379:6379"
-    volumes:
-      - redis-data:/data
 
   web:
     build: .
-    command: daphne app.asgi.application --host 0.0.0.0 --port 8000
+    command: daphne tweet_app.asgi:application -b 0.0.0.0 -p 8000
     depends_on:
       - db
       - redis
