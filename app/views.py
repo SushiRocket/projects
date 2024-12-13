@@ -223,19 +223,64 @@ def like_toggle(request,pk):
 
 def user_profile(request, username): #URLからusernameを取得。path('user/<str:username>/', views.user_profile, name='user_profile')
     user = get_object_or_404(User, username=username)
+    section = request.GET.get('section', 'tweets')
 
     if section == 'comments':
         comments = Comment.objects.filter(user=user).select_related('tweets').order_by('-created_at')
         tweets = [comment.tweet for comment in comments]
 
-        
+        paginator = Paginator(tweets, 3)
+        page = request.GET.get('page')
+        try:
+            tweets_page = paginator.page(page)
+        except PageNotAnInteger:
+            tweets_page = paginator.page(1)
+        except EmptyPage:
+            tweets_page = paginator.page(paginator.num_pages)
+        context = {
+            'user': user,
+            'section': comments,
+            'tweets': tweets_page,
+            'is_paginated': tweets_page.has_other_pages(),
+            'page_obj': tweets_page,
+        }
+    elif section == 'likes':
+        likes = Like.objects.filter(user=user).select_related('tweets').order_by('-created_at')
+        tweets = [like.tweet for like in likes]
 
-    tweets = Tweet.objects.filter(author=user).order_by('-created_at')
+        paginater = Paginator(tweets, 3)
+        page = request.GET.get('page')
+        try:
+            tweets_page = paginater.page(page)
+        except PageNotAnInteger:
+            tweets_page = paginater.page(1)
+        except EmptyPage:
+            tweets_page = paginater.page(paginater.num_pages)
+        context = {
+            'user': user,
+            'section': likes,
+            'tweets': tweets_page,
+            'is_paginated': tweets_page.has_other_pages(),
+            'page_obj': tweets_page,
+        }
+    else:
 
-    context = { #テンプレートに辞書で返す
-        'profile_user': user,
-        'tweets': tweets,
-    }
+        tweets = Tweet.objects.filter(author=user).order_by('-created_at')
+        paginator = Paginator(tweets, 3)
+        page = request.GET.get('page')
+        try:
+            tweets_page = paginater.page(page)
+        except PageNotAnInteger:
+            tweets_page = paginater.page(1)
+        except EmptyPage:
+            tweets_page = tweets.page(paginater.num_pages)
+        context = { #テンプレートに辞書で返す
+            'profile_user': user,
+            'section': tweets,
+            'tweets': tweets_page,
+            'is_paginated': tweets_page.has_other_pages(),
+            'page_obj': tweets_page,
+        }
 
     return render(request, 'app/user_profile.html', context)
 
