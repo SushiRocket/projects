@@ -248,14 +248,14 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
         likes = Like.objects.filter(user=user).select_related('tweets').order_by('-created_at')
         tweets = [like.tweet for like in likes]
 
-        paginater = Paginator(tweets, 3)
+        paginator = Paginator(tweets, 3)
         page = request.GET.get('page')
         try:
-            tweets_page = paginater.page(page)
+            tweets_page = paginator.page(page)
         except PageNotAnInteger:
-            tweets_page = paginater.page(1)
+            tweets_page = paginator.page(1)
         except EmptyPage:
-            tweets_page = paginater.page(paginater.num_pages)
+            tweets_page = paginator.page(paginator.num_pages)
         context = {
             'user': user,
             'section': likes,
@@ -264,16 +264,15 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
             'page_obj': tweets_page,
         }
     else:
-
         tweets = Tweet.objects.filter(author=user).order_by('-created_at')
         paginator = Paginator(tweets, 3)
         page = request.GET.get('page')
         try:
-            tweets_page = paginater.page(page)
+            tweets_page = paginator.page(page)
         except PageNotAnInteger:
-            tweets_page = paginater.page(1)
+            tweets_page = paginator.page(1)
         except EmptyPage:
-            tweets_page = tweets.page(paginater.num_pages)
+            tweets_page = paginator.page(paginator.num_pages)
         context = { #テンプレートに辞書で返す
             'profile_user': user,
             'section': tweets,
