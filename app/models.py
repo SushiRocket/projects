@@ -37,8 +37,8 @@ class Profile(models.Model):
         return f"{self.user.username}'s Profile"
 
 class Follow(models.Model):
-    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
-    following = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, related_name='following_relations', on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name='follower_relations', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

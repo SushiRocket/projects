@@ -226,7 +226,7 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
     section = request.GET.get('section', 'tweets')
 
     if section == 'comments':
-        comments = Comment.objects.filter(user=user).select_related('tweets').order_by('-created_at')
+        comments = Comment.objects.filter(user=user).select_related('tweet').order_by('-created_at')
         tweets = [comment.tweet for comment in comments]
 
         paginator = Paginator(tweets, 3)
@@ -238,14 +238,14 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
         except EmptyPage:
             tweets_page = paginator.page(paginator.num_pages)
         context = {
-            'user': user,
+            'profile_user': user,
             'section': comments,
             'tweets': tweets_page,
             'is_paginated': tweets_page.has_other_pages(),
             'page_obj': tweets_page,
         }
     elif section == 'likes':
-        likes = Like.objects.filter(user=user).select_related('tweets').order_by('-created_at')
+        likes = Like.objects.filter(user=user).select_related('tweet').order_by('-created_at')
         tweets = [like.tweet for like in likes]
 
         paginator = Paginator(tweets, 3)
@@ -257,7 +257,7 @@ def user_profile(request, username): #URLからusernameを取得。path('user/<s
         except EmptyPage:
             tweets_page = paginator.page(paginator.num_pages)
         context = {
-            'user': user,
+            'profile_user': user,
             'section': likes,
             'tweets': tweets_page,
             'is_paginated': tweets_page.has_other_pages(),
