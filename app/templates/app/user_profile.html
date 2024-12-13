@@ -27,8 +27,8 @@
                 フォロー
                 {% endif %}
             </button><!-- | はテンプレートタグ内で複数の条件や選択肢を記述する-->>
-            <span id="follower-count">{{ profile_user|follower_count}}</span>フォロワー
-            <span id="following-count">{{ profile_user|following_count}}</span>フォロー中
+            <span id="follower-count">{{ profile_user|follower_count }}</span>フォロワー
+            <span id="following-count">{{ profile_user|following_count }}</span>フォロー中
         {% endif %}
     {% else %}
         <a href="{% url 'app:edit_profile' %}">プロフィール編集</a>
@@ -76,11 +76,18 @@
 
     <hr>
 
+
+    <div class="profile-sections">
+        <a href="?section=tweets">投稿</a>
+        <a href="?section=comments">コメント</a>
+        <a href="?section=likes">いいね</a>
+    </div>
+
     <div class="user-tweets">
         <h3>{{ profile_user.username }}のツイート一覧</h3>
-        {% if tweets %}
+        {% if tweets.object_list %}
             <ul>
-                {% for tweet in tweets %}
+                {% for tweet in tweets.object_list %}
                     <li>
                         <p>{{ tweet.content }}</p>
                         <small>{{ tweet.created_at|date:"Y年m月d日 H:i" }}</small>
