@@ -1,3 +1,5 @@
 Django
 psycopg2-binary
 Pillow>=8.0.0
+channels #通知機能や非同期通信を可能にするためのライブラリ
+channels-redis #チャネルのバックエンドとし使うredis

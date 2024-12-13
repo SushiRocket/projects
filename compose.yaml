@@ -7,13 +7,25 @@ services:
       POSTGRES_PASSWORD: testpass
     volumes:
       - db-data:/var/lib/postgresql/data
+  radis:
+    image: redis:7
+    port:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
   web:
     build: .
+    command: daphne app.asgi.application --host 0.0.0.0 --port 8000
     depends_on:
       - db
+      - redis
     ports:
       - "8000:8000"
     volumes:
       - .:/code
 volumes:
   db-data:
+
+#Daphne（ダフネ）は Django アプリケーション用の ASGI (Asynchronous Server Gateway Interface) サーバー
+#ASGIは、Djangoでリアルタイム通信（WebSocketなど）を可能にする新しいプロトコル
