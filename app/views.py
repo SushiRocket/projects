@@ -8,12 +8,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
-from.models import Tweet,Like,Follow,Comment
+from.models import Tweet,Like,Follow,Comment,Notification
 from.forms import TweetForm,SignUpForm,ProfileUpdateForm,CommentForm,CommentEditForm,TweetSearchForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden,JsonResponse
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
-
+from django.utils import timezone
+from channels.layers import get_channel_layer
 
 # Create your views here.
 
@@ -301,20 +302,27 @@ def edit_profile(request):
     return render(request, 'app/edit_profile.html', context)
 
 @login_required
-@require_POST
 def follow_toggle(request,username):
     target_user = get_object_or_404(User, username=username)
     if target_user == request.user:
         return JsonResponse({'error': '自分自身をふぉろーすることはできません'}, status=400)
-    
-    follow, created = Follow.objects.get_or_create(follower=request.user, following=target_user)
 
-    if not created:
-        follow.delete()
-        following=False
+    follow_relation = Follow.objects.get_or_create(follower=request.user, following=target_user)
+
+    if follow_relation.excist():
+        follow_relation.delete()
+        is_following=False
 
     else:
-        following=True
+        is_following=True
+        Notification.objects.create(
+            user = target_user,
+            messages = f"{user.username}があなたをフォローしました。",
+            created_at = timezone.now()
+        )
+
+        #通知をリアルタイで送信
+        channel_layer = get_channel_layer()
     
     follower_count = target_user.follower.count()
     following_count = target_user.following.count()
